@@ -1,34 +1,57 @@
 --- rehunk.nvim core module
 --- Pure Lua functions for diff parsing and recalculation
 --- No Neovim APIs - can be tested with plain Lua
+--- @class rehunk.core
 local M = {}
+
+--- @class rehunk.Changes
+--- @field hunk integer
+--- @field old string
+--- @field new string
+
+--- @class rehunk.LinesChanges
+--- @field lines string[]
+--- @field changes rehunk.Changes[]
+
+--- @class rehunk.CounterCounts
+--- @field context integer
+--- @field additions integer
+--- @field deletions integer
+
+--- @class rehunk.Header
+--- @field x integer
+--- @field y integer
+--- @field a integer
+--- @field b integer
+--- @field suffix string
 
 --- Parse a hunk header line into components
 --- @param line string The line to parse
---- @return table|nil {x=number, y=number, a=number, b=number, suffix=string} or nil if not a header
+--- @return rehunk.Header|nil header {x=number, y=number, a=number, b=number, suffix=string} or nil if not a header
 function M.parse_header(line)
   -- Pattern: @@ -X,Y +A,B @@ [suffix]
   -- Y and B are optional (omitted when count = 1)
   local x, y, a, b, suffix = line:match('^@@%s+%-(%d+),?(%d*)%s+%+(%d+),?(%d*)%s+@@(.*)$')
 
   if not x then
-    return nil
+    return
   end
 
   -- Convert to numbers; default to 1 when count is omitted (single-line hunk)
+  --- @type rehunk.Header
   return {
-    x = tonumber(x),
-    y = y ~= '' and tonumber(y) or 1,
-    a = tonumber(a),
-    b = b ~= '' and tonumber(b) or 1,
+    x = tonumber(x, 10),
+    y = y ~= '' and tonumber(y, 10) or 1,
+    a = tonumber(a, 10),
+    b = b ~= '' and tonumber(b, 10) or 1,
     suffix = suffix or '',
   }
 end
 
 --- Count lines in a hunk body by prefix type
 --- @param lines string[] Array of hunk body lines (between headers)
---- @return table|nil {context=number, additions=number, deletions=number}
---- @return string|nil Error message if invalid prefix found
+--- @return rehunk.CounterCounts|nil counts `{context=integer, additions=integer, deletions=integer}`
+--- @return string|nil err Error message if invalid prefix found
 function M.count_lines(lines)
   local counts = {
     context = 0,
@@ -66,12 +89,12 @@ end
 
 --- Build a header string from components
 --- Handles single-line omission rule (count=1 means omit count)
---- @param x number Original file start line
---- @param y number Original file line count
---- @param a number New file start line
---- @param b number New file line count
+--- @param x integer Original file start line
+--- @param y integer Original file line count
+--- @param a integer New file start line
+--- @param b integer New file line count
 --- @param suffix string Optional function context after @@
---- @return string The formatted header line
+--- @return string header The formatted header line
 function M.build_header(x, y, a, b, suffix)
   -- Build the -X,Y part (omit count if Y == 1)
   local old_part
@@ -94,21 +117,23 @@ function M.build_header(x, y, a, b, suffix)
 end
 
 --- Format header range for feedback display
---- @param x number Original file start line
---- @param y number Original file line count
---- @param a number New file start line
---- @param b number New file line count
---- @return string The range portion "-X,Y +A,B"
+--- @param x integer Original file start line
+--- @param y integer Original file line count
+--- @param a integer New file start line
+--- @param b integer New file line count
+--- @return string range The range portion "-X,Y +A,B"
 local function format_range(x, y, a, b)
   return string.format('-%d,%d +%d,%d', x, y, a, b)
 end
 
 --- Process entire buffer, recalculating all hunk headers
 --- @param lines string[] All buffer lines
---- @return table|nil {lines=string[], changes={{hunk=n, old=str, new=str},...}}
---- @return string|nil Error message on failure
+--- @return rehunk.LinesChanges|nil lines_changes {lines=string[], changes={{hunk=n, old=str, new=str},...}}
+--- @return string|nil err Error message on failure
 function M.recalculate(lines)
   local result_lines = {}
+
+  --- @type rehunk.Changes[]
   local changes = {}
   local hunk_number = 0
 
@@ -173,6 +198,7 @@ function M.recalculate(lines)
     end
   end
 
+  --- @type rehunk.LinesChanges
   return {
     lines = result_lines,
     changes = changes,
