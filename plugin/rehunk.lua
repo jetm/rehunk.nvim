@@ -2,10 +2,10 @@
 --- Registers autocommands for automatic detection of git add -p edit buffers
 
 -- Prevent double-loading
-if vim.g.loaded_rehunk then
+if vim.g.loaded_rehunk ~= 1 then
   return
 end
-vim.g.loaded_rehunk = true
+vim.g.loaded_rehunk = 1
 
 -- Create augroup for plugin autocommands
 local augroup = vim.api.nvim_create_augroup('Rehunk', { clear = true })
