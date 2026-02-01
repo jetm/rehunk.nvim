@@ -1,22 +1,28 @@
 --- rehunk.nvim - Automatic diff header recalculation for git add -p
 --- Neovim integration layer
+--- @class rehunk
 local M = {}
 
 local core = require('rehunk.core')
 
+--- @class rehunk.Config
+--- Recalculate on BufWritePre
+--- @field auto_recalculate? boolean
+
 --- Default configuration (zero-config ready)
+--- @type rehunk.Config
 M.config = {
   auto_recalculate = true, -- Recalculate on BufWritePre
 }
 
 --- Setup function (optional - plugin works without calling this)
---- @param opts table|nil User configuration options
+--- @param opts rehunk.Config|nil User configuration options
 function M.setup(opts)
   M.config = vim.tbl_deep_extend('force', M.config, opts or {})
 end
 
 --- Format feedback message from changes array
---- @param changes table[] Array of {hunk=number, old=string, new=string}
+--- @param changes rehunk.Changes[] Array of `{hunk=integer, old=string, new=string}`
 --- @return string Formatted feedback message
 local function format_feedback(changes)
   if #changes == 0 then
@@ -44,7 +50,7 @@ local function format_feedback(changes)
 end
 
 --- Recalculate hunk headers in a buffer
---- @param bufnr number|nil Buffer number (defaults to current)
+--- @param bufnr integer|nil Buffer ID (defaults to current)
 --- @return boolean Success status
 function M.recalculate(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
@@ -84,7 +90,7 @@ end
 
 --- Attach plugin functionality to a buffer
 --- Creates buffer-local command and BufWritePre hook
---- @param bufnr number|nil Buffer number (defaults to current)
+--- @param bufnr integer|nil Buffer ID (defaults to current)
 function M.attach(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
 
