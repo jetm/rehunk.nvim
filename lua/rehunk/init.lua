@@ -19,7 +19,7 @@ end
 --- @param changes table[] Array of {hunk=number, old=string, new=string}
 --- @return string Formatted feedback message
 local function format_feedback(changes)
-  if #changes == 0 then
+  if vim.tbl_isempty(changes) then
     return 'Rehunk: No hunks found'
   end
 
@@ -30,9 +30,9 @@ local function format_feedback(changes)
     local changed = change.old ~= change.new
     if changed then
       any_changed = true
-      table.insert(parts, string.format('Hunk %d: %s -> %s', change.hunk, change.old, change.new))
+      table.insert(parts, ('Hunk %d: %s -> %s'):format(change.hunk, change.old, change.new))
     else
-      table.insert(parts, string.format('Hunk %d: unchanged', change.hunk))
+      table.insert(parts, ('Hunk %d: unchanged'):format(change.hunk))
     end
   end
 
