@@ -75,7 +75,7 @@ end
 --- @return string The formatted header line
 function M.build_header(x, y, a, b, suffix)
   -- Build the -X,Y part (omit count if Y == 1)
-  local old_part = y == 1 and ('-%d'):format(x) or ('%d,%d'):format(x, y)
+  local old_part = y == 1 and ('-%d'):format(x) or ('-%d,%d'):format(x, y)
 
   -- Build the +A,B part (omit count if B == 1)
   local new_part = b == 1 and ('+%d'):format(a) or ('+%d,%d'):format(a, b)
