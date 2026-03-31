@@ -58,7 +58,7 @@ function M.count_lines(lines)
       counts.context = counts.context + 1
     else
       -- Invalid prefix - fail fast per D5
-      return nil, string.format("Invalid line prefix '%s' at line %d", prefix, i)
+      return nil, ("Invalid line prefix '%s' at line %d"):format(prefix, i)
     end
   end
 
@@ -75,23 +75,13 @@ end
 --- @return string The formatted header line
 function M.build_header(x, y, a, b, suffix)
   -- Build the -X,Y part (omit count if Y == 1)
-  local old_part
-  if y == 1 then
-    old_part = string.format('-%d', x)
-  else
-    old_part = string.format('-%d,%d', x, y)
-  end
+  local old_part = y == 1 and ('-%d'):format(x) or ('-%d,%d'):format(x, y)
 
   -- Build the +A,B part (omit count if B == 1)
-  local new_part
-  if b == 1 then
-    new_part = string.format('+%d', a)
-  else
-    new_part = string.format('+%d,%d', a, b)
-  end
+  local new_part = b == 1 and ('+%d'):format(a) or ('+%d,%d'):format(a, b)
 
   -- Combine with suffix (suffix includes leading space if present)
-  return string.format('@@ %s %s @@%s', old_part, new_part, suffix)
+  return ('@@ %s %s @@%s'):format(old_part, new_part, suffix)
 end
 
 --- Format header range for feedback display
@@ -101,7 +91,7 @@ end
 --- @param b number New file line count
 --- @return string The range portion "-X,Y +A,B"
 local function format_range(x, y, a, b)
-  return string.format('-%d,%d +%d,%d', x, y, a, b)
+  return ('-%d,%d +%d,%d'):format(x, y, a, b)
 end
 
 --- Process entire buffer, recalculating all hunk headers
