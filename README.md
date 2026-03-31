@@ -15,15 +15,6 @@ When you edit a hunk during interactive staging (`git add -p` → `e`), git requ
 }
 ```
 
-### packer.nvim
-
-```lua
-use {
-  "jetm/rehunk.nvim",
-  ft = "diff",
-}
-```
-
 ## Usage
 
 1. Run `git add -p` and select a hunk
