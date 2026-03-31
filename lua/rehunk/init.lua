@@ -19,7 +19,7 @@ end
 --- @param changes table[] Array of {hunk=number, old=string, new=string}
 --- @return string Formatted feedback message
 local function format_feedback(changes)
-  if vim.tbl_isempty(changes) then
+  if #changes == 0 then
     return 'Rehunk: No hunks found'
   end
 
