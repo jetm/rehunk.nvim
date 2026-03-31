@@ -53,8 +53,9 @@ function M.count_lines(lines)
     elseif prefix == '\\' then
       -- No-newline marker ("\ No newline at end of file") - ignore
     elseif prefix == '' then
-      -- Empty line - this is an error per D6 (fail fast)
-      return nil, ("Empty line at line %d"):format(i)
+      -- Empty line - treat as blank context line (trailing whitespace strippers
+      -- like trim.nvim remove the leading space from blank context lines)
+      counts.context = counts.context + 1
     else
       -- Invalid prefix - fail fast per D5
       return nil, ("Invalid line prefix '%s' at line %d"):format(prefix, i)
