@@ -1,6 +1,5 @@
 --- rehunk.nvim - Automatic diff header recalculation for git add -p
 --- Neovim integration layer
---- @class rehunk
 local M = {}
 
 local core = require('rehunk.core')

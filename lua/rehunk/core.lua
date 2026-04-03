@@ -1,7 +1,6 @@
 --- rehunk.nvim core module
 --- Pure Lua functions for diff parsing and recalculation
 --- No Neovim APIs - can be tested with plain Lua
---- @class rehunk.core
 local M = {}
 
 --- @class rehunk.Changes
