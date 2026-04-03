@@ -6,8 +6,7 @@ local M = {}
 local core = require('rehunk.core')
 
 --- @class rehunk.Config
---- Recalculate on BufWritePre
---- @field auto_recalculate? boolean
+--- @field auto_recalculate? boolean Recalculate on BufWritePre
 
 --- Default configuration (zero-config ready)
 --- @type rehunk.Config
